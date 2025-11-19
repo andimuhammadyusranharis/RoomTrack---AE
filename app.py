@@ -66,30 +66,51 @@ def book_submit():
 
     room_id = int(request.form.get('room_id'))
     reason = request.form.get('reason', '').strip()
+
+    # input tambahan
+    booking_date = request.form.get('booking_date')
+    start_time = request.form.get('start_time')
+    end_time = request.form.get('end_time')
+
     room = Room.query.get_or_404(room_id)
 
-    # kondisi: cek status room (kondisi penting untuk penilaian)
-    if not room.is_available:
-        flash(f'{room.name} sudah dibooking oleh {room.booked_by_name}.', 'error')
+    # konversi ke tipe Python
+    date_obj = datetime.strptime(booking_date, "%Y-%m-%d").date()
+    start_obj = datetime.strptime(start_time, "%H:%M").time()
+    end_obj = datetime.strptime(end_time, "%H:%M").time()
+
+    # validasi waktu
+    if start_obj >= end_obj:
+        flash('Jam mulai harus lebih kecil dari jam selesai.', 'error')
+        return redirect(url_for('book_form', room_id=room_id))
+
+    # cek bentrok jadwal
+    conflict = Booking.query.filter(
+        Booking.room_id == room_id,
+        Booking.booking_date == date_obj,
+        Booking.start_time < end_obj,
+        Booking.end_time > start_obj
+    ).first()
+
+    if conflict:
+        flash('Ruangan bentrok dengan jadwal lain.', 'error')
         return redirect(url_for('dashboard'))
 
-    # lakukan booking (fungsi/operasi)
+    # simpan booking
     booking = Booking(
         name=session['name'],
         nim=session['nim'],
         room_id=room.id,
         reason=reason,
+        booking_date=date_obj,
+        start_time=start_obj,
+        end_time=end_obj,
         timestamp=datetime.now()
     )
-    db.session.add(booking)
-    db.session.flush()  # untuk dapatkan booking.id
-    # update status room
-    room.is_available = False
-    room.booked_by_name = session['name']
-    room.booked_by_nim = session['nim']
-    room.current_booking_id = booking.id
 
+    db.session.add(booking)
     db.session.commit()
+
     flash(f'Booking sukses: {room.name}', 'success')
     return redirect(url_for('dashboard'))
 
