@@ -1,0 +1,146 @@
+body {
+font-family: Arial, sans-serif;
+margin: 0;
+padding: 0;
+background: #f7f7f7;
+color: #222;
+}
+
+header {
+background: #1f7a8c;
+color: white;
+padding: 12px 20px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
+
+header h1 {
+margin: 0;
+font-size: 18px;
+}
+
+.user {
+font-size: 14px;
+}
+
+main {
+padding: 20px;
+max-width: 900px;
+margin: 20px auto;
+background: white;
+border-radius: 6px;
+box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+footer {
+text-align: center;
+padding: 10px;
+color: #666;
+}
+
+.form label {
+display: block;
+margin-top: 10px;
+font-weight: 600;
+}
+
+.form input[type="text"],
+.form textarea {
+width: 98%;
+padding: 8px;
+margin-top: 4px;
+border: 1px solid #ccc;
+border-radius: 4px;
+}
+
+.form button {
+margin-top: 12px;
+padding: 8px 14px;
+border: none;
+background: #1f7a8c;
+color: white;
+border-radius: 4px;
+cursor: pointer;
+}
+
+.rooms {
+display: flex;
+flex-wrap: wrap;
+gap: 12px;
+}
+
+.room-card {
+width: 200px;
+padding: 12px;
+border: 1px solid #e0e0e0;
+border-radius: 6px;
+background: #fff;
+}
+
+.status {
+padding: 6px;
+border-radius: 4px;
+margin-bottom: 8px;
+text-align: center;
+font-weight: 700;
+}
+
+.available {
+background: #e6ffef;
+color: #0b8a44;
+}
+
+.booked {
+background: #ffe6e6;
+color: #b30000;
+}
+
+.btn {
+display: inline-block;
+padding: 6px 10px;
+background: #1f7a8c;
+color: white;
+border-radius: 4px;
+text-decoration: none;
+}
+
+.link {
+display: inline-block;
+margin-top: 12px;
+color: #1f7a8c;
+text-decoration: none;
+}
+
+.history {
+width: 100%;
+border-collapse: collapse;
+margin-top: 10px;
+}
+
+.history th,
+.history td {
+border: 1px solid #ddd;
+padding: 8px;
+}
+
+.messages .flash {
+padding: 8px;
+margin-bottom: 8px;
+border-radius: 4px;
+}
+
+.flash.success {
+background: #e6ffef;
+color: #145a2b;
+}
+
+.flash.error {
+background: #ffe6e6;
+color: #8a1a1a;
+}
+
+.flash.info {
+background: #eef6ff;
+color: #12406a;
+}

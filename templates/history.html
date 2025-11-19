@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Riwayat Booking</h2>
+<table class="history">
+    <thead>
+    <tr><th>Waktu</th><th>Nama</th><th>NIM</th><th>Ruangan</th><th>Alasan</th></tr>
+    </thead>
+    <tbody>
+    {% for b in bookings %}
+        <tr>
+        <td>{{ b.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+        <td>{{ b.name }}</td>
+        <td>{{ b.nim }}</td>
+        <td>{{ b.room.name }}</td>
+        <td>{{ b.reason }}</td>
+        </tr>
+    {% else %}
+        <tr><td colspan="5">Belum ada riwayat booking.</td></tr>
+    {% endfor %}
+    </tbody>
+</table>
+<a href="{{ url_for('dashboard') }}" class="link">Kembali ke Dashboard</a>
+{% endblock %}

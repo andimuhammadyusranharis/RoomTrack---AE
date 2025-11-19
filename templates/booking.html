@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Booking: {{ room.name }}</h2>
+<form action="{{ url_for('book_submit') }}" method="post" class="form">
+    <input type="hidden" name="room_id" value="{{ room.id }}">
+    <label>Nama</label>
+    <input type="text" name="name" value="{{ user.name }}" readonly>
+    <label>NIM</label>
+    <input type="text" name="nim" value="{{ user.nim }}" readonly>
+    <label>Alasan / Kegiatan</label>
+    <textarea name="reason" required></textarea>
+    <button type="submit">Submit Booking</button>
+</form>
+{% endblock %}
