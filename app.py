@@ -58,6 +58,23 @@ def book_form(room_id):
     room = Room.query.get_or_404(room_id)
     return render_template('booking.html', room=room, user=session)
 
+@app.route('/room/<int:room_id>')
+def room_detail(room_id):
+    if not is_logged_in():
+        flash("Silakan login terlebih dahulu.", "error")
+        return redirect(url_for('index'))
+
+    room = Room.query.get_or_404(room_id)
+
+    # ambil semua booking berdasarkan tanggal terbaru
+    bookings = Booking.query.filter_by(room_id=room.id).order_by(
+        Booking.date.desc(),
+        Booking.start_time.asc()
+    ).all()
+
+    return render_template("room_detail.html", room=room, bookings=bookings, user=session)
+
+
 @app.route('/book_submit', methods=['POST'])
 def book_submit():
     if not is_logged_in():
@@ -65,53 +82,47 @@ def book_submit():
         return redirect(url_for('index'))
 
     room_id = int(request.form.get('room_id'))
-    reason = request.form.get('reason', '').strip()
-
-    # input tambahan
-    booking_date = request.form.get('booking_date')
+    class_name = request.form.get('class_name')
+    date = request.form.get('date')
     start_time = request.form.get('start_time')
     end_time = request.form.get('end_time')
+    reason = request.form.get('reason')
 
     room = Room.query.get_or_404(room_id)
 
-    # konversi ke tipe Python
-    date_obj = datetime.strptime(booking_date, "%Y-%m-%d").date()
-    start_obj = datetime.strptime(start_time, "%H:%M").time()
-    end_obj = datetime.strptime(end_time, "%H:%M").time()
+    # Cek tabrakan jadwal (booking bentrok)
+    date_obj = datetime.strptime(date, "%Y-%m-%d").date()
+    start_t = datetime.strptime(start_time, "%H:%M").time()
+    end_t = datetime.strptime(end_time, "%H:%M").time()
 
-    # validasi waktu
-    if start_obj >= end_obj:
-        flash('Jam mulai harus lebih kecil dari jam selesai.', 'error')
-        return redirect(url_for('book_form', room_id=room_id))
-
-    # cek bentrok jadwal
-    conflict = Booking.query.filter(
+    conflicting = Booking.query.filter(
         Booking.room_id == room_id,
-        Booking.booking_date == date_obj,
-        Booking.start_time < end_obj,
-        Booking.end_time > start_obj
+        Booking.date == date_obj,
+        Booking.start_time < end_t,
+        Booking.end_time > start_t
     ).first()
 
-    if conflict:
-        flash('Ruangan bentrok dengan jadwal lain.', 'error')
+    if conflicting:
+        flash("Jadwal bentrok dengan booking lain!", "error")
         return redirect(url_for('dashboard'))
 
-    # simpan booking
+    # buat booking baru
     booking = Booking(
         name=session['name'],
         nim=session['nim'],
+        class_name=class_name,
         room_id=room.id,
         reason=reason,
-        booking_date=date_obj,
-        start_time=start_obj,
-        end_time=end_obj,
+        date=date_obj,
+        start_time=start_t,
+        end_time=end_t,
         timestamp=datetime.now()
     )
 
     db.session.add(booking)
     db.session.commit()
 
-    flash(f'Booking sukses: {room.name}', 'success')
+    flash(f'Booking sukses untuk {room.name}', 'success')
     return redirect(url_for('dashboard'))
 
 @app.route('/release/<int:room_id>', methods=['POST'])

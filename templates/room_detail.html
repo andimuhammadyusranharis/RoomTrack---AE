@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Detail Ruangan: {{ room.name }}</h2>
+
+<a class="btn" href="{{ url_for('book_form', room_id=room.id) }}">Buat Booking Baru</a>
+<br><br>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Peminjam</th>
+            <th>Kelas</th>
+            <th>Tanggal</th>
+            <th>Jam</th>
+            <th>Alasan / Kegiatan</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for b in bookings %}
+        <tr>
+            <td>{{ b.name }}</td>
+            <td>{{ b.class_name }}</td>
+            <td>{{ b.date }}</td>
+            <td>{{ b.start_time }} - {{ b.end_time }}</td>
+            <td>{{ b.reason }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<a href="{{ url_for('dashboard') }}">Kembali ke Dashboard</a>
+{% endblock %}

@@ -1,24 +1,26 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Dashboard - Daftar Ruangan Gedung AE</h2>
+<h2>Dashboard - Jadwal Ruangan</h2>
+
 <div class="rooms">
     {% for room in rooms %}
     <div class="room-card">
         <h3>{{ room.name }}</h3>
-        {% if room.is_available %}
-        <div class="status available">Available</div>
-        <a class="btn" href="{{ url_for('book_form', room_id=room.id) }}">Book</a>
+
+        <!-- booking terakhir sebagai ringkas -->
+        {% set latest = room.bookings|last %}
+
+        {% if latest %}
+            <p><b>Dipakai terakhir:</b> {{ latest.date }} ({{ latest.start_time }} - {{ latest.end_time }})</p>
+            <p><b>Oleh:</b> {{ latest.name }} ({{ latest.class_name }})</p>
         {% else %}
-        <div class="status booked">Booked by {{ room.booked_by_name }}</div>
-        {% if room.booked_by_nim == user.nim %}
-            <form action="{{ url_for('release', room_id=room.id) }}" method="post" style="display:inline;">
-            <button type="submit" class="btn">Release</button>
-            </form>
+            <p>Belum ada booking</p>
         {% endif %}
-        {% endif %}
+
+        <a class="btn" href="{{ url_for('book_form', room_id=room.id) }}">Book</a>
+        <a class="btn-secondary" href="{{ url_for('room_detail', room_id=room.id) }}">Detail Ruangan</a>
     </div>
     {% endfor %}
 </div>
 
-<a href="{{ url_for('history') }}" class="link">Lihat Riwayat Booking</a>
 {% endblock %}
